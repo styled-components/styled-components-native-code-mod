@@ -1,7 +1,8 @@
+/* eslint-disable no-console */
 const path = require('path');
 const fs = require('fs');
 const { transform } = require('babel-core');
-const plugin = require('.');
+const plugin = require('./babel-plugin');
 
 const input = fs.readFileSync(path.join(__dirname, 'actual.js'), 'utf8');
 const actual = transform(input, {
