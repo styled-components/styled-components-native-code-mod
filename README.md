@@ -34,7 +34,7 @@ styled.View`
 If you interpolate values that need units, you'll have to do that manually.
 
 ```js
-const value = '10px';
+const value = '10';
 
 styled.View`
   top: ${value};
