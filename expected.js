@@ -2,7 +2,8 @@
 import styled from 'styled-components/native';
 import other from 'styled-components/native';
 
-// Transforms numbers and uses styled.View notation
+// Transforms numbers
+// Uses styled.View notation
 styled.View`
   top: 10px;
   right: 1.5px;
@@ -48,4 +49,9 @@ styled.View`
 // Does not require 'styled' name
 other.View`
   top: 10px;
+`;
+
+// Transforms font family
+styled.View`
+  font-family: "Helvetica";
 `;

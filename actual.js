@@ -50,3 +50,8 @@ styled.View`
 other.View`
   top: 10;
 `;
+
+// Transforms font family
+styled.View`
+  font-family: Helvetica;
+`;

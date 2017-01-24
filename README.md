@@ -1,6 +1,9 @@
 # styled-components-native-code-mod
 
-Transforms v1 styled-components to v2. It adds `px` units where relevant.
+Transforms v1 styled-components to v2. It
+
+* Adds `px` units where relevant
+* Fixes `font-family` to include quotes
 
 In
 

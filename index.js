@@ -55,14 +55,14 @@ module.exports = () => ({
       if (source !== 'styled-components/native') return;
 
       const { quasis, expressions } = quasi;
-      if (!quasis[0].value.cooked) return;
+      if (!quasis[0].value.cooked) return; // Caused when calling with a node that we replaced
+
       // Substitute all ${interpolations} with arbitrary test that we can find later
       // This is so we can shove it in postCSS
       const substitutionNames = expressions.map((value, index) => `__${index}substitution__`);
       const cssText =
         quasis[0].value.cooked +
         substitutionNames.map((name, index) => name + quasis[index + 1].value.cooked).join('');
-      if (!cssText || cssText === 'undefined') return;
       const substitutionMap = _.fromPairs(_.zip(substitutionNames, expressions));
 
       // Transform all simple values
@@ -70,6 +70,7 @@ module.exports = () => ({
       root.walkDecls((decl) => {
         const testProp = decl.prop.replace(/-/, '').toLowerCase();
         if (isSimpleNumberReplacement(testProp)) decl.value = replaceSimpleNumbers(decl.value);
+        if (/fontfamily/.test(testProp)) decl.value = `"${decl.value}"`;
       });
 
       const nextCssText = String(root);
