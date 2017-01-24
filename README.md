@@ -11,7 +11,8 @@ In
 styled.View`
   top: 10;
   flex: 1;
-  font: bold 12/16 "Helvetica";
+  margin: 10 20;
+  font-family: Georgia;
   color: ${props => props.color};
 `;
 ```
@@ -22,7 +23,8 @@ Out
 styled.View`
   top: 10px;
   flex: 1;
-  font: bold 12px/16px "Helvetica";
+  margin: 10px 20px;
+  font-family: "Georgia";
   color: ${props => props.color};
 `;
 ```
