@@ -40,7 +40,7 @@ module.exports = (file, api) => {
   const j = api.jscodeshift;
   const ast = j(file.source);
 
-  const templateFrom = _.curry((tail, raw) => (
+  const templateElement = _.curry((tail, raw) => (
     j.templateElement({ cooked: JSON.stringify(raw).slice(1, -1), raw }, tail)
   ));
 
@@ -62,8 +62,6 @@ module.exports = (file, api) => {
     if (source !== 'styled-components/native') return;
 
     const { quasis, expressions } = quasi;
-    if (!quasis[0].value.cooked) return; // Caused when calling with a node that we replaced
-
     // Substitute all ${interpolations} with arbitrary test that we can find later
     // This is so we can shove it in postCSS
     const substitutionNames = expressions.map((value, index) => `__${index}substitution__`);
@@ -75,9 +73,9 @@ module.exports = (file, api) => {
     // Transform all simple values
     const root = postcss.parse(cssText);
     root.walkDecls((decl) => {
-      const testProp = decl.prop.replace(/-/, '').toLowerCase();
+      const testProp = decl.prop.replace(/-/g, '').toLowerCase();
       if (isSimpleNumberReplacement(testProp)) decl.value = replaceSimpleNumbers(decl.value);
-      if (/fontfamily/.test(testProp)) decl.value = `"${decl.value}"`;
+      if (testProp === 'fontfamily') decl.value = `"${decl.value}"`;
     });
 
     const nextCssText = String(root);
@@ -93,8 +91,8 @@ module.exports = (file, api) => {
     const expressionValues = _.dropLast(1, _.map(1, allValues));
 
     const newQuasis = [].concat(
-      _.map(templateFrom(false), _.initial(quasiValues)),
-      templateFrom(true, _.last(quasiValues))
+      _.map(templateElement(false), _.initial(quasiValues)),
+      templateElement(true, _.last(quasiValues))
     );
     const newExpressions = _.map(_.propertyOf(substitutionMap), expressionValues);
     const newQuasi = j.templateLiteral(newQuasis, newExpressions);
