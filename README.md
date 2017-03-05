@@ -6,8 +6,9 @@ Transforms v1 styled-components to v2. It
 * Fixes `font-family` to include quotes
 
 ```bash
-npm install --global styled-components-native-code-mod
-styled-code-mod path/to/file1.js path/to/file2.js ...
+npm install -g jscodeshift
+npm install https://github.com/styled-components/styled-components-native-code-mod
+jscodeshift -t styled-components-native-code-mod/transforms/units <path>
 ```
 
 **Will modify files in place, so make sure you can recover if it goes wrong!**

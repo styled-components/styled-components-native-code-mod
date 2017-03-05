@@ -51,6 +51,13 @@ other.View`
   top: 10;
 `;
 
+// Doesn't incorrectly scope
+function test(styled) {
+  styled.View`
+    top: 10;
+  `;
+}
+
 // Transforms font family
 styled.View`
   font-family: Helvetica;

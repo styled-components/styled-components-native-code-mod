@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "jest"
   },
   "bin": {
     "styled-code-mod": "./index.js"
@@ -15,11 +15,13 @@
   "devDependencies": {
     "eslint": "^3.14.0",
     "eslint-config-airbnb-base": "^11.0.1",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "jest": "^19.0.2"
   },
   "dependencies": {
     "babel-core": "^6.22.1",
     "babel-types": "^6.22.0",
+    "jscodeshift": "^0.3.30",
     "lodash": "^4.17.4",
     "postcss": "^5.2.11"
   }
