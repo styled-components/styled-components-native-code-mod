@@ -1,5 +1,5 @@
 /* eslint-disable */
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import other from 'styled-components/native';
 
 // Transforms numbers
@@ -46,6 +46,16 @@ styled.View`
   background-color: ${props => props.backgroundColor};
 `;
 
+// Transforms font family
+styled.View`
+  font-family: Helvetica;
+`;
+
+// Transforms css
+css`
+  top: 10;
+`;
+
 // Does not require 'styled' name
 other.View`
   top: 10;
@@ -57,8 +67,3 @@ function test(styled) {
     top: 10;
   `;
 }
-
-// Transforms font family
-styled.View`
-  font-family: Helvetica;
-`;

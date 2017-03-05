@@ -9,6 +9,7 @@ const postcss = require('postcss');
 const _ = require('lodash/fp');
 
 const tagTypes = {
+  Identifier: node => node,
   CallExpression: node => node.callee,
   MemberExpression: node => node.object,
 };
@@ -33,6 +34,8 @@ const isSimpleNumberReplacement = testProp =>
 const replaceSimpleNumbers = value =>
   value.replace(/([+-]?(?:\d*\.)?\d+(?:[Ee][+-]?\d+)?)(?!\d|\.|[Ee]|px|substitution)/g, '$1px');
 
+const importSpecifiers = ['ImportDefaultSpecifier', 'ImportSpecifier'];
+
 module.exports = (file, api) => {
   const j = api.jscodeshift;
   const ast = j(file.source);
@@ -51,9 +54,9 @@ module.exports = (file, api) => {
     if (callee.type !== 'Identifier') return;
 
     // Find the import statement for the `styled` part
-    const importDefaultSpecifier = _.get([callee.name, 0, 'parentPath'], path.scope.getBindings());
-    if (_.get(['value', 'type'], importDefaultSpecifier) !== 'ImportDefaultSpecifier') return;
-    const importDeclaration = importDefaultSpecifier.parentPath;
+    const importSpecifier = _.get([callee.name, 0, 'parentPath'], path.scope.getBindings());
+    if (!_.includes(_.get(['value', 'type'], importSpecifier), importSpecifiers)) return;
+    const importDeclaration = importSpecifier.parentPath;
     const source = importDeclaration.node.source.value;
     // And make sure it's only for styled-components/native
     if (source !== 'styled-components/native') return;
