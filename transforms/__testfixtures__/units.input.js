@@ -51,6 +51,13 @@ styled.View`
   font-family: Helvetica;
 `;
 
+// Transforms special cases of shorthands
+styled.View`
+  flex: 1 2 3;
+  font: bold italic 12/16 Helvetica;
+  font: 12 Helvetica;
+`;
+
 // Transforms css
 css`
   top: 10;
