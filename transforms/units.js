@@ -34,6 +34,20 @@ const isSimpleNumberReplacement = testProp =>
 const replaceSimpleNumbers = value =>
   value.replace(/([+-]?(?:\d*\.)?\d+(?:[Ee][+-]?\d+)?)(?!\d|\.|[Ee]|px|substitution)/g, '$1px');
 
+// Propnames, lower-case, no hyphens
+// Happens after replaceSimpleNumbers
+const customFixers = {
+  // Add px to flex basis in flex shorthand
+  flex: value => value.replace(/((?:[\d.]+\s+){2}[\d.])$/, '$1px'),
+  // Quotes for family in font shorthand
+  font: value => value.replace(
+    /^(.*[\d.]+px\s?(?:\/\s*[\d.]+px\s*)?)([^"]*?)\s*$/,
+    (match, p1, p2) => `${p1}${JSON.stringify(p2)}`
+  ),
+  // Quotes for font-family
+  fontfamily: value => JSON.stringify(value),
+};
+
 const importSpecifiers = ['ImportDefaultSpecifier', 'ImportSpecifier'];
 
 module.exports = (file, api) => {
@@ -75,7 +89,7 @@ module.exports = (file, api) => {
     root.walkDecls((decl) => {
       const testProp = decl.prop.replace(/-/g, '').toLowerCase();
       if (isSimpleNumberReplacement(testProp)) decl.value = replaceSimpleNumbers(decl.value);
-      if (testProp === 'fontfamily') decl.value = `"${decl.value}"`;
+      if (testProp in customFixers) decl.value = customFixers[testProp](decl.value);
     });
 
     const nextCssText = String(root);
