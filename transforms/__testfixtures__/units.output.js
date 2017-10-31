@@ -46,6 +46,12 @@ styled.View`
   background-color: ${props => props.backgroundColor};
 `;
 
+// Transforms with mixin substitutions
+styled.View`
+  color: ${color};
+  ${props => props.customStyles};
+`;
+
 // Transforms font family
 styled.View`
   font-family: "Helvetica";

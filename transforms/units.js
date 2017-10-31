@@ -78,7 +78,7 @@ module.exports = (file, api) => {
     const { quasis, expressions } = quasi;
     // Substitute all ${interpolations} with arbitrary test that we can find later
     // This is so we can shove it in postCSS
-    const substitutionNames = expressions.map((value, index) => `__${index}substitution__`);
+    const substitutionNames = expressions.map((value, index) => `/*__${index}substitution__*/`);
     const cssText =
       quasis[0].value.cooked +
       substitutionNames.map((name, index) => name + quasis[index + 1].value.cooked).join('');
@@ -95,7 +95,7 @@ module.exports = (file, api) => {
     const nextCssText = String(root);
 
     const substititionNames = Object.keys(substitutionMap);
-    const substitionNamesRegExp = new RegExp(`(${substititionNames.join('|')})`, 'g');
+    const substitionNamesRegExp = new RegExp(`(${substititionNames.map(n => n.replace(/\*/g, '\\*')).join('|')})`, 'g');
 
     // Create new template literal using transformed CSS and previous expressions
     const allValues = !_.isEmpty(substitutionMap)
