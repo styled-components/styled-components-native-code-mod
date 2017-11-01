@@ -51,6 +51,12 @@ styled.View`
   font-family: Helvetica;
 `;
 
+// Do not transform quoted font family
+styled.View`
+  font-family: "Helvetica";
+  font-family: "${fontFamily}";
+`;
+
 // Transforms special cases of shorthands
 styled.View`
   flex: 1 2 3;
