@@ -45,7 +45,7 @@ const customFixers = {
     (match, p1, p2) => `${p1}${JSON.stringify(p2)}`
   ),
   // Quotes for font-family
-  fontfamily: value => JSON.stringify(value),
+  fontfamily: value => (/^".*"$/.test(value) ? value : JSON.stringify(value)),
 };
 
 const importSpecifiers = ['ImportDefaultSpecifier', 'ImportSpecifier'];
