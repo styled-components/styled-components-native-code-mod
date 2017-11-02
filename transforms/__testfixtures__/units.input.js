@@ -40,6 +40,13 @@ styled.View`
   z-index: 5;
 `;
 
+// Does not add units to interpolated values in properties that need units
+styled.View`
+  top: ${top};
+  padding: 0 ${horizontal};
+  margin: ${top} 0 ${bottom} 0;
+`;
+
 // Transforms with substitutions
 styled.View`
   color: ${color};

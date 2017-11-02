@@ -79,13 +79,29 @@ module.exports = (file, api) => {
     // Substitute all ${interpolations} with arbitrary test that we can find later
     // This is so we can shove it in postCSS
     const substitutionNames = expressions.map((value, index) => `/*__${index}substitution__*/`);
-    const cssText =
+    let cssText =
       quasis[0].value.cooked +
       substitutionNames.map((name, index) => name + quasis[index + 1].value.cooked).join('');
-    const substitutionMap = _.fromPairs(_.zip(substitutionNames, expressions));
+    let substitutionMap = _.fromPairs(_.zip(substitutionNames, expressions));
+
+    // Replace mixin interpolations as comments, but as ids if in properties
+    let root = postcss.parse(cssText);
+    const notInPropertiesIndexes = {};
+    root.walkComments((comment) => {
+      const index = substitutionNames.indexOf(`/*${comment.text}*/`);
+      if (index >= 0) notInPropertiesIndexes[index] = true;
+    });
+
+    substitutionNames.forEach((name, index) => {
+      if (!notInPropertiesIndexes[index]) substitutionNames[index] = name.replace(/^\/\*(.+)\*\/$/, '$1');
+    });
+    cssText =
+      quasis[0].value.cooked +
+      substitutionNames.map((name, index) => name + quasis[index + 1].value.cooked).join('');
+    substitutionMap = _.fromPairs(_.zip(substitutionNames, expressions));
 
     // Transform all simple values
-    const root = postcss.parse(cssText);
+    root = postcss.parse(cssText);
     root.walkDecls((decl) => {
       const testProp = decl.prop.replace(/-/g, '').toLowerCase();
       if (isSimpleNumberReplacement(testProp)) decl.value = replaceSimpleNumbers(decl.value);
