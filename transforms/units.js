@@ -78,14 +78,30 @@ module.exports = (file, api) => {
     const { quasis, expressions } = quasi;
     // Substitute all ${interpolations} with arbitrary test that we can find later
     // This is so we can shove it in postCSS
-    const substitutionNames = expressions.map((value, index) => `__${index}substitution__`);
-    const cssText =
+    const substitutionNames = expressions.map((value, index) => `/*__${index}substitution__*/`);
+    let cssText =
       quasis[0].value.cooked +
       substitutionNames.map((name, index) => name + quasis[index + 1].value.cooked).join('');
-    const substitutionMap = _.fromPairs(_.zip(substitutionNames, expressions));
+    let substitutionMap = _.fromPairs(_.zip(substitutionNames, expressions));
+
+    // Replace mixin interpolations as comments, but as ids if in properties
+    let root = postcss.parse(cssText);
+    const notInPropertiesIndexes = {};
+    root.walkComments((comment) => {
+      const index = substitutionNames.indexOf(`/*${comment.text}*/`);
+      if (index >= 0) notInPropertiesIndexes[index] = true;
+    });
+
+    substitutionNames.forEach((name, index) => {
+      if (!notInPropertiesIndexes[index]) substitutionNames[index] = name.replace(/^\/\*(.+)\*\/$/, '$1');
+    });
+    cssText =
+      quasis[0].value.cooked +
+      substitutionNames.map((name, index) => name + quasis[index + 1].value.cooked).join('');
+    substitutionMap = _.fromPairs(_.zip(substitutionNames, expressions));
 
     // Transform all simple values
-    const root = postcss.parse(cssText);
+    root = postcss.parse(cssText);
     root.walkDecls((decl) => {
       const testProp = decl.prop.replace(/-/g, '').toLowerCase();
       if (isSimpleNumberReplacement(testProp)) decl.value = replaceSimpleNumbers(decl.value);
@@ -95,7 +111,7 @@ module.exports = (file, api) => {
     const nextCssText = String(root);
 
     const substititionNames = Object.keys(substitutionMap);
-    const substitionNamesRegExp = new RegExp(`(${substititionNames.join('|')})`, 'g');
+    const substitionNamesRegExp = new RegExp(`(${substititionNames.map(n => n.replace(/\*/g, '\\*')).join('|')})`, 'g');
 
     // Create new template literal using transformed CSS and previous expressions
     const allValues = !_.isEmpty(substitutionMap)

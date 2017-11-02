@@ -40,10 +40,23 @@ styled.View`
   z-index: 5;
 `;
 
+// Does not add units to interpolated values in properties that need units
+styled.View`
+  top: ${top};
+  padding: 0px ${horizontal};
+  margin: ${top} 0px ${bottom} 0px;
+`;
+
 // Transforms with substitutions
 styled.View`
   color: ${color};
   background-color: ${props => props.backgroundColor};
+`;
+
+// Transforms with mixin substitutions
+styled.View`
+  color: ${color};
+  ${props => props.customStyles};
 `;
 
 // Transforms font family
