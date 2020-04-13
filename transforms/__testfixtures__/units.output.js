@@ -1,6 +1,6 @@
 /* eslint-disable */
-import styled, { css } from 'styled-components/native';
-import other from 'styled-components/native';
+import styled, { css } from 'styled-components';
+import other from 'styled-components';
 
 // Transforms numbers
 // Uses styled.View notation
