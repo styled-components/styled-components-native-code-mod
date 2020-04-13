@@ -50,7 +50,7 @@ const customFixers = {
 
 const importSpecifiers = ['ImportDefaultSpecifier', 'ImportSpecifier'];
 
-module.exports = (file, api) => {
+const transform = (file, api) => {
   const j = api.jscodeshift;
   const ast = j(file.source);
 
@@ -73,7 +73,7 @@ module.exports = (file, api) => {
     const importDeclaration = importSpecifier.parentPath;
     const source = importDeclaration.node.source.value;
     // And make sure it's only for styled-components/native
-    if (source !== 'styled-components/native') return;
+    if (source !== 'styled-components' && source !== 'styled-components/native') return;
 
     const { quasis, expressions } = quasi;
     // Substitute all ${interpolations} with arbitrary test that we can find later
@@ -135,3 +135,7 @@ module.exports = (file, api) => {
 
   return ast.toSource();
 };
+
+module.exports = transform;
+// uncomment to enable parsing .tsx
+// module.exports.parser = 'tsx';
